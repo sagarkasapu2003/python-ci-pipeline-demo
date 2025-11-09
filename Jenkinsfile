@@ -8,27 +8,28 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build Docker Image') {
             steps {
                 sh '''
-                    echo "Installing dependencies..."
-                    pip install -r requirements.txt --break-system-packages
+                    echo "Building Docker image..."
+                    docker build -t python-ci-demo:latest .
+                    docker images | grep python-ci-demo
                 '''
             }
         }
 
-        stage('Run Application') {
+        stage('Verify Docker Image') {
             steps {
                 sh '''
-                    echo "Running Python script..."
-                    python3 app.py
+                    echo "Verifying image build..."
+                    docker images | grep python-ci-demo && echo "✅ Docker image exists!"
                 '''
             }
         }
 
         stage('Deploy') {
             steps {
-                echo "🚀 Deploying app (placeholder — add Docker or SCP later)"
+                echo "🚀 Docker image build verified successfully!"
             }
         }
     }
